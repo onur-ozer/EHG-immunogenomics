@@ -71,7 +71,6 @@ run_fisher_allele_test <- function(data, group_col, col1, col2,
 # settings
 
 OUTPUT_DIR <- "results"
-FST_REGIONS <- c("Asia", "EUR")
 
 dir.create(OUTPUT_DIR, recursive = TRUE, showWarnings = FALSE)
 
@@ -141,8 +140,7 @@ neol_DQB <- neol_2 %>%
 
 class1_2f_fst <- neol_1 %>%
   select(Sample_ID, Region, Population, group, HLA_A, HLA_B, HLA_C) %>%
-  drop_na() %>%
-  filter(Region %in% FST_REGIONS)
+  drop_na()
 
 hf_class1_2f <- genind2hierfstat(df2genind(
   as.data.frame(class1_2f_fst[, c("HLA_A", "HLA_B", "HLA_C"), drop = FALSE]),
@@ -159,8 +157,7 @@ class2_2f_fst <- neol_2 %>%
   na.omit() %>%
   mutate(HLA_DRB = paste0(HLA_DRB1_1, "-", HLA_DRB1_2),
          HLA_DQB = paste0(HLA_DQB1_1, "-", HLA_DQB1_2)) %>%
-  select(Sample_ID:group, HLA_DRB, HLA_DQB) %>%
-  filter(Region %in% FST_REGIONS)
+  select(Sample_ID:group, HLA_DRB, HLA_DQB)
 
 hf_class2_2f <- genind2hierfstat(df2genind(
   as.data.frame(class2_2f_fst[, c("HLA_DRB", "HLA_DQB"), drop = FALSE]),
@@ -174,8 +171,7 @@ pco_class2_2f <- plot_pcoa(pair_wc_class2_2f, subtitle = "HLA class-II (second-f
 
 class1_1f_fst <- neol_1 %>%
   select(Sample_ID, Region, Population, group, HLA_A_r, HLA_B_r, HLA_C_r) %>%
-  drop_na() %>%
-  filter(Region %in% FST_REGIONS)
+  drop_na()
 
 hf_class1_1f <- genind2hierfstat(df2genind(
   as.data.frame(class1_1f_fst[, c("HLA_A_r", "HLA_B_r", "HLA_C_r"), drop = FALSE]),
@@ -187,8 +183,7 @@ pair_wc_class1_1f[pair_wc_class1_1f < 0] <- 0
 pco_class1_1f <- plot_pcoa(pair_wc_class1_1f, subtitle = "HLA class-I (first-field)",
                             flip_ax1 = TRUE)
 
-class2_1f_fst <- merge(neol_DRB, neol_DQB) %>%
-  filter(Region %in% FST_REGIONS)
+class2_1f_fst <- merge(neol_DRB, neol_DQB)
 
 hf_class2_1f <- genind2hierfstat(df2genind(
   as.data.frame(class2_1f_fst[, c("HLA_DRB", "HLA_DQB"), drop = FALSE]),
@@ -354,8 +349,7 @@ for (res in fisher_DQB) {
 
 c1_all <- neol_1 %>%
   select(Sample_ID, Region, Population, group, HLA_A, HLA_B, HLA_C) %>%
-  drop_na() %>%
-  filter(Region %in% FST_REGIONS)
+  drop_na()
 
 hf_c1_all <- genind2hierfstat(df2genind(
   as.data.frame(c1_all[, c("HLA_A", "HLA_B", "HLA_C"), drop = FALSE]),
@@ -371,8 +365,7 @@ c2_all <- neol_2 %>%
   na.omit() %>%
   mutate(HLA_DRB = paste0(HLA_DRB1_1, "-", HLA_DRB1_2),
          HLA_DQB = paste0(HLA_DQB1_1, "-", HLA_DQB1_2)) %>%
-  select(Sample_ID:group, HLA_DRB, HLA_DQB) %>%
-  filter(Region %in% FST_REGIONS)
+  select(Sample_ID:group, HLA_DRB, HLA_DQB)
 
 hf_c2_all <- genind2hierfstat(df2genind(
   as.data.frame(c2_all[, c("HLA_DRB", "HLA_DQB"), drop = FALSE]),
@@ -386,8 +379,7 @@ pco_c2_all <- plot_pcoa(fst_c2_all, subtitle = "HLA class-II (LYALOVO INCLUDED)"
 c1_no_lya <- neol_1 %>%
   filter(!Sample_ID %in% L) %>%
   select(Sample_ID, Region, Population, group, HLA_A, HLA_B, HLA_C) %>%
-  drop_na() %>%
-  filter(Region %in% FST_REGIONS)
+  drop_na()
 
 hf_c1_no_lya <- genind2hierfstat(df2genind(
   as.data.frame(c1_no_lya[, c("HLA_A", "HLA_B", "HLA_C"), drop = FALSE]),
@@ -404,8 +396,7 @@ c2_no_lya <- neol_2 %>%
   na.omit() %>%
   mutate(HLA_DRB = paste0(HLA_DRB1_1, "-", HLA_DRB1_2),
          HLA_DQB = paste0(HLA_DQB1_1, "-", HLA_DQB1_2)) %>%
-  select(Sample_ID:group, HLA_DRB, HLA_DQB) %>%
-  filter(Region %in% FST_REGIONS)
+  select(Sample_ID:group, HLA_DRB, HLA_DQB)
 
 hf_c2_no_lya <- genind2hierfstat(df2genind(
   as.data.frame(c2_no_lya[, c("HLA_DRB", "HLA_DQB"), drop = FALSE]),
