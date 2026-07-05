@@ -16,12 +16,12 @@ FILL_LIMITS <- c("CEU", "GBR", "FIN", "TSI", "IBS",
                  "early_neolithic_farmers", "late_neolithic_farmers", "sakhtysh")
 FILL_LABELS <- c("CEU", "GBR", "FIN", "TSI", "IBS", "MR", "EF", "LF", "Sakhtysh")
 FILL_VALUES <- c("#C8A47A", "#A67C52", "#8A5E35", "#6F4424", "#4E2D14", "#2C1608",
-                 "#0072B2", "#009E73", "#E69F00")
+                 "#0072B2", "#CC79A7", "#E69F00")
 
 MAINFIGURE_LIMITS <- c("CEU", "Russia Nizhny Novgorod, Russians",
                       "early_neolithic_farmers", "late_neolithic_farmers", "sakhtysh")
 MAINFIGURE_LABELS <- c("CEU", "MR", "EF", "LF", "Sakhtysh")
-MAINFIGURE_VALUES <- c("#C8A47A", "#2C1608", "#0072B2", "#009E73", "#E69F00")
+MAINFIGURE_VALUES <- c("#C8A47A", "#2C1608", "#0072B2", "#CC79A7", "#E69F00")
 
 # functions
 

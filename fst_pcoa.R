@@ -11,7 +11,7 @@ COLOR_LIMITS <- c("CEU", "GBR", "FIN", "TSI", "IBS", "MR",
                   "early_neolithic_farmers", "late_neolithic_farmers", "sakhtysh")
 COLOR_LABELS <- c("CEU", "GBR", "FIN", "TSI", "IBS", "MR", "EF", "LF", "Sakhtysh")
 COLOR_VALUES <- c("#C8A47A", "#A67C52", "#8A5E35", "#6F4424", "#4E2D14", "#2C1608",
-                  "#0072B2", "#009E73", "#E69F00")
+                  "#0072B2", "#CC79A7", "#E69F00")
 
 # functions
 
