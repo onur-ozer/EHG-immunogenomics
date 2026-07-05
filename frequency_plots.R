@@ -176,7 +176,82 @@ ggsave(file.path(OUTPUT_DIR,"combined_frequencyplot.png"),
 ggsave(file.path(OUTPUT_DIR,"combined_frequencyplot.pdf"),
        combined_barplot, units = "mm", width = 195, height = 275)
 
-# section 2: spotlight plots
+# section 2: first-field frequency bar plots (Fig. S12)
+
+modern_russia_1f <- read.csv("data/russia_AFND_1field.csv") %>%
+  filter(population == MR_LABEL)
+colnames(modern_russia_1f) <- c("x", "loci", "Var1", "Freq.y", "Freq.x")
+
+class1_1f_raw <- read.csv("data/combined_HLA_genotypes_class1.csv", sep = ",") %>%
+  filter(Population != "derenburg") %>%
+  replace_with_na_all(condition = ~.x == "") %>%
+  drop_na(c(HLA_A_1_twodigit, HLA_B_1_twodigit, HLA_C_1_twodigit,
+            HLA_A_2_twodigit, HLA_B_2_twodigit, HLA_C_2_twodigit))
+
+class1_1f_raw$HLA_A <- paste0(class1_1f_raw$HLA_A_1_twodigit, "-", class1_1f_raw$HLA_A_2_twodigit)
+class1_1f_raw$HLA_B <- paste0(class1_1f_raw$HLA_B_1_twodigit, "-", class1_1f_raw$HLA_B_2_twodigit)
+class1_1f_raw$HLA_C <- paste0(class1_1f_raw$HLA_C_1_twodigit, "-", class1_1f_raw$HLA_C_2_twodigit)
+
+class1_1f_freq_df <- recode_population(
+  class1_1f_raw %>%
+    select(Sample_ID, Region, Population, Time, group, HLA_A, HLA_B, HLA_C) %>%
+    mutate(HLA_A_r = HLA_A, HLA_B_r = HLA_B, HLA_C_r = HLA_C)
+)
+
+neol_1_1f_genind <- df2genind(
+  as.data.frame(select(class1_1f_freq_df, HLA_A_r, HLA_B_r, HLA_C_r)),
+  ploidy = 2,
+  ind.names = class1_1f_freq_df$Sample_ID,
+  pop = class1_1f_freq_df$Population,
+  sep = "-"
+)
+
+HLA_A_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X1", "HLA_A_r", "A",    modern_russia_1f)
+HLA_B_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X2", "HLA_B_r", "B",    modern_russia_1f)
+HLA_C_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X3", "HLA_C_r", "C",    modern_russia_1f)
+
+class2_1f_raw <- read.csv("data/combined_HLA_genotypes_class2.csv", sep = ",") %>%
+  filter(Population != "derenburg") %>%
+  replace_with_na_all(condition = ~.x == "") %>%
+  drop_na(c(HLA_DQB1_1_twodigit, HLA_DQB1_2_twodigit,
+            HLA_DRB1_1_twodigit, HLA_DRB1_2_twodigit))
+
+class2_1f_raw$HLA_DRB <- paste0(class2_1f_raw$HLA_DRB1_1_twodigit, "-", class2_1f_raw$HLA_DRB1_2_twodigit)
+class2_1f_raw$HLA_DQB <- paste0(class2_1f_raw$HLA_DQB1_1_twodigit, "-", class2_1f_raw$HLA_DQB1_2_twodigit)
+
+class2_1f_freq_df <- recode_population(
+  class2_1f_raw %>%
+    select(Sample_ID, Region, Population, Time, group, HLA_DRB, HLA_DQB) %>%
+    mutate(HLA_DRB_r = HLA_DRB, HLA_DQB_r = HLA_DQB)
+)
+
+neol_2_1f_genind <- df2genind(
+  as.data.frame(select(class2_1f_freq_df, HLA_DRB_r, HLA_DQB_r)),
+  ploidy = 2,
+  ind.names = class2_1f_freq_df$Sample_ID,
+  pop = class2_1f_freq_df$Population,
+  sep = "-"
+)
+
+HLA_DRB_1f_frequencies <- extract_freq(neol_2_1f_genind, "X1", "HLA_DRB_r", "DRB1", modern_russia_1f)
+HLA_DQB_1f_frequencies <- extract_freq(neol_2_1f_genind, "X2", "HLA_DQB_r", "DQB1", modern_russia_1f)
+
+barplotA_1f   <- plot_freq_bar(filter_study_pops(HLA_A_1f_frequencies),   "HLA-A alleles")
+barplotB_1f   <- plot_freq_bar(filter_study_pops(HLA_B_1f_frequencies),   "HLA-B alleles")
+barplotC_1f   <- plot_freq_bar(filter_study_pops(HLA_C_1f_frequencies),   "HLA-C alleles")
+barplotDRB_1f <- plot_freq_bar(filter_study_pops(HLA_DRB_1f_frequencies), "HLA-DRB1 alleles")
+barplotDQB_1f <- plot_freq_bar(filter_study_pops(HLA_DQB_1f_frequencies), "HLA-DQB1 alleles")
+
+combined_barplot_1f <- ggarrange(barplotA_1f, barplotB_1f, barplotC_1f, barplotDRB_1f, barplotDQB_1f,
+                                 common.legend = TRUE, nrow = 5,
+                                 align = "v", legend = "bottom")
+
+ggsave(file.path(OUTPUT_DIR, "combined_frequencyplot_1field.png"),
+       combined_barplot_1f, units = "mm", width = 195, height = 275, dpi = 800)
+ggsave(file.path(OUTPUT_DIR, "combined_frequencyplot_1field.pdf"),
+       combined_barplot_1f, units = "mm", width = 195, height = 275)
+
+# section 3: spotlight plots
 
 combined_all <- bind_rows(
   mutate(filter_study_pops(HLA_A_frequencies), locus = "A"),
