@@ -65,21 +65,22 @@ plot_freq_bar <- function(freq_df, x_label, top_n = 5, base_size = 12.5) {
 }
 
 plot_mainfigure <- function(combined_freq_df, alleles, x_order = alleles,
-                           y_label = "") {
+                           y_label = "", base_size = 10.5, label_size = 6.5) {
   df <- combined_freq_df %>%
     filter(Var1 %in% MAINFIGURE_LIMITS, x %in% alleles) %>%
     mutate(Var1 = factor(Var1, levels = MAINFIGURE_LIMITS))
-  ggplot(df, aes(y = Freq.y, x = x, fill = Var1)) +
+  p <- ggplot(df, aes(y = Freq.y, x = x, fill = Var1)) +
     geom_bar(stat = "identity", position = "dodge") +
     scale_x_discrete(limits = x_order) +
     scale_fill_manual(limits = MAINFIGURE_LIMITS,
                       labels = MAINFIGURE_LABELS,
                       values = MAINFIGURE_VALUES) +
-    theme_classic(base_size = 10.5) +
-    theme(axis.text.x = element_text(size = 6.5)) +
+    theme_classic(base_size = base_size) +
     xlab("") +
     ylab(y_label) +
-    labs(fill = "population")
+    labs(fill = "")
+  if (!is.null(label_size)) p <- p + theme(axis.text.x = element_text(size = label_size))
+  p
 }
 
 # settings
@@ -206,9 +207,9 @@ neol_1_1f_genind <- df2genind(
   sep = "-"
 )
 
-HLA_A_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X1", "HLA_A_r", "A",    modern_russia_1f)
-HLA_B_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X2", "HLA_B_r", "B",    modern_russia_1f)
-HLA_C_1f_frequencies  <- extract_freq(neol_1_1f_genind, "X3", "HLA_C_r", "C",    modern_russia_1f)
+HLA_A_1f_frequencies <- extract_freq(neol_1_1f_genind, "X1", "HLA_A_r", "A", modern_russia_1f)
+HLA_B_1f_frequencies <- extract_freq(neol_1_1f_genind, "X2", "HLA_B_r", "B", modern_russia_1f)
+HLA_C_1f_frequencies <- extract_freq(neol_1_1f_genind, "X3", "HLA_C_r", "C", modern_russia_1f)
 
 class2_1f_raw <- read.csv("data/combined_HLA_genotypes_class2.csv", sep = ",") %>%
   filter(Population != "derenburg") %>%
@@ -236,9 +237,9 @@ neol_2_1f_genind <- df2genind(
 HLA_DRB_1f_frequencies <- extract_freq(neol_2_1f_genind, "X1", "HLA_DRB_r", "DRB1", modern_russia_1f)
 HLA_DQB_1f_frequencies <- extract_freq(neol_2_1f_genind, "X2", "HLA_DQB_r", "DQB1", modern_russia_1f)
 
-barplotA_1f   <- plot_freq_bar(filter_study_pops(HLA_A_1f_frequencies),   "HLA-A alleles")
-barplotB_1f   <- plot_freq_bar(filter_study_pops(HLA_B_1f_frequencies),   "HLA-B alleles")
-barplotC_1f   <- plot_freq_bar(filter_study_pops(HLA_C_1f_frequencies),   "HLA-C alleles")
+barplotA_1f <- plot_freq_bar(filter_study_pops(HLA_A_1f_frequencies), "HLA-A alleles")
+barplotB_1f <- plot_freq_bar(filter_study_pops(HLA_B_1f_frequencies), "HLA-B alleles")
+barplotC_1f <- plot_freq_bar(filter_study_pops(HLA_C_1f_frequencies), "HLA-C alleles")
 barplotDRB_1f <- plot_freq_bar(filter_study_pops(HLA_DRB_1f_frequencies), "HLA-DRB1 alleles")
 barplotDQB_1f <- plot_freq_bar(filter_study_pops(HLA_DQB_1f_frequencies), "HLA-DQB1 alleles")
 
@@ -261,11 +262,11 @@ combined_all <- bind_rows(
   mutate(filter_study_pops(HLA_DQB_frequencies), locus = "DQB1")
 )
 
-pA <- plot_mainfigure(combined_all, c("A*31:01", "A*01:01"), y_label = "frequency")
-pB <- plot_mainfigure(combined_all, c("B*07:02", "B*27:05"))
-pC <- plot_mainfigure(combined_all, c("C*07:01", "C*02:02"), x_order = c("C*07:01", "C*02:02"))
-pDRB <- plot_mainfigure(combined_all, c("DRB1*15:01", "DRB1*08:01"), x_order = c("DRB1*15:01", "DRB1*08:01"))
-pDQB <- plot_mainfigure(combined_all, c("DQB1*06:02", "DQB1*04:02"), x_order = c("DQB1*06:02", "DQB1*04:02"))
+pA <- plot_mainfigure(combined_all, c("A*01:01", "A*31:01"), y_label = "frequency", base_size = 11.5, label_size = NULL)
+pB <- plot_mainfigure(combined_all, c("B*07:02", "B*27:05"), base_size = 11.5, label_size = NULL)
+pC <- plot_mainfigure(combined_all, c("C*07:01", "C*02:02"), base_size = 11.5, label_size = NULL)
+pDRB <- plot_mainfigure(combined_all, c("DRB1*15:01", "DRB1*08:01"))
+pDQB <- plot_mainfigure(combined_all, c("DQB1*06:02", "DQB1*04:02"))
 
 combined_mainfigure <- ggarrange(pA, pB, pC, pDRB, pDQB,
                                 labels = c("A","B","C","D","E"),
@@ -276,4 +277,3 @@ ggsave(file.path(OUTPUT_DIR,"combined_mainfigure.png"),
        combined_mainfigure, units = "mm", width = 225, height = 55, dpi = 800)
 ggsave(file.path(OUTPUT_DIR,"combined_mainfigure.pdf"),
        combined_mainfigure, units = "mm", width = 225, height = 55)
-                      
